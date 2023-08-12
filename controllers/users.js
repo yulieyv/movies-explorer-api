@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const errorMessages = require('../utils/errors/ErrorMessages');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -27,11 +28,11 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((error) => {
       if (error instanceof mongoose.Error.ValidationError) {
-        return next(new BadRequestError('Неверные логин или пароль'));
+        return next(new BadRequestError(errorMessages.incorrectInfo));
       }
       if (error.code === 11000) {
         return next(
-          new ConflictError('Пользователь с таким email уже зарегистрирован'),
+          new ConflictError(errorMessages.incorrectEmail),
         );
       }
       return next(error);
@@ -58,7 +59,7 @@ module.exports.getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        return next(new NotFoundError('Информация о пользователе не найдена'));
+        return next(new NotFoundError(errorMessages.unfindedUser));
       }
       return res.status(OK_STATUS).send(user);
     })
@@ -73,14 +74,14 @@ module.exports.updateUserInfo = (req, res, next) => {
   })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Информация о пользователе не найдена');
+        throw new NotFoundError(errorMessages.notfoundedUser);
       }
       res.status(OK_STATUS).send(user);
     })
     .catch((error) => {
       if (error instanceof mongoose.Error.ValidationError) {
-        return next(new BadRequestError('Невалидные данные'));
+        return next(new BadRequestError(errorMessages.invalidData));
       }
-      return next(new InternalServerError('Ошибка обновления данных профиля'));
+      return next(new InternalServerError(errorMessages.internalServer));
     });
 };

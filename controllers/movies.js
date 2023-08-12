@@ -6,14 +6,14 @@ const BadRequestError = require('../utils/errors/BadRequestError');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const InternalServerError = require('../utils/errors/InternalServerError');
 const ForbiddenError = require('../utils/errors/ForbiddenError');
+const errorMessages = require('../utils/errors/ErrorMessages');
 
 // Получение всех сохранённых текущим пользователем фильмов
 module.exports.getMovies = (req, res, next) => {
-  console.log('Hello');
   Movie.find({ owner: req.user._id })
     .then((movies) => {
       if (!movies) {
-        return next(new NotFoundError('Нет сохраненных фильмов'));
+        return next(new NotFoundError(errorMessages.notfoundedMovies));
       }
       return res.status(OK_STATUS).send(movies);
     })
@@ -55,9 +55,9 @@ module.exports.createMovie = (req, res, next) => {
     })
     .catch((error) => {
       if (error instanceof mongoose.Error.ValidationError) {
-        return next(new BadRequestError('Невалидные данные'));
+        return next(new BadRequestError(errorMessages.invalidData));
       }
-      return next(new InternalServerError('Ошибка при сохранении фильма'));
+      return next(new InternalServerError(errorMessages.incorrectMovie));
     });
 };
 
@@ -67,10 +67,10 @@ module.exports.deleteMovie = (req, res, next) => {
   Movie.findById({ _id: req.params.movieId })
     .then((movie) => {
       if (!movie) {
-        return next(new NotFoundError('Фильм с указанным ID не найден'));
+        return next(new NotFoundError(errorMessages.notfoundedMovieId));
       }
       if (movie.owner.toString() !== owner) {
-        return next(new ForbiddenError('Вы не можете удалить этот фильм'));
+        return next(new ForbiddenError(errorMessages.incorrectDelete));
       }
       return Movie.deleteOne({ _id: req.params.movieId }).then(
         (deletedMovie) => {

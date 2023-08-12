@@ -7,17 +7,16 @@ const helmet = require('helmet');
 const limiter = require('./middlewares/rateLimiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const errorHandler = require('./middlewares/errorHandler');
-const { PORT, DB_URL } = require('./utils/constants');
 const router = require('./routes/index');
 
-mongoose.connect(DB_URL);
+mongoose.connect(process.env.DB_URL);
 
 const app = express();
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
-app.use(requestLogger);
 app.use(limiter);
+app.use(requestLogger);
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
@@ -28,6 +27,6 @@ app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT, () => {
   console.log('Сервер запущен!');
 });
