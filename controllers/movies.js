@@ -9,6 +9,7 @@ const ForbiddenError = require('../utils/errors/ForbiddenError');
 
 // Получение всех сохранённых текущим пользователем фильмов
 module.exports.getMovies = (req, res, next) => {
+  console.log('Hello');
   Movie.find({ owner: req.user._id })
     .then((movies) => {
       if (!movies) {
