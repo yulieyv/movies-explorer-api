@@ -2,8 +2,8 @@
 
 API сервиса, в котором можно найти фильмы по запросу и сохранить в личном кабинете.
 
-IP адрес сервера: **158.160.29.225**
-URI: **`https://api.yamalieva.diploma.nomoreparties.co`**
+- IP адрес сервера: **158.160.29.225**
+- URL: **https://api.yamalieva.diploma.nomoreparties.co**
 
 ---
 
