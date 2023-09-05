@@ -8,5 +8,4 @@ module.exports = {
   OK_STATUS,
   CREATED_STATUS,
   regexLink,
-  regexImage,
 };
